@@ -25,7 +25,7 @@
 | prefecture_id          | integer    | null: false,                   |
 | scheduled_delivery_id  | integer    | null: false,                   |
 | price                  | integer    | null: false, index: true       |
-
+| user                   | references | null: false, foreign_key: true |
 
 ## buyers テーブル
 
@@ -35,7 +35,7 @@
 | prefecture_id | integer | null: false,                   |
 | city          | string  | null: false, default: "",      |
 | addresses     | string  | null: false, default: ""       |
-| building      | string  | default: ""                    |
+| building      | string  |              default: ""       |
 | phone_num     | string  | null: false, default: ""       |
 
 ## transactions テーブル
@@ -44,6 +44,7 @@
 | ------ | ---------- | ------------------------------ |
 | user   | references | null: false, foreign_key: true |
 | item   | references | null: false, foreign_key: true |
+| buyer  | references | null: false, foreign_key: true |
 
 # モデル設計
 
@@ -51,6 +52,7 @@
 
 ### Association
 * has_many :transactions
+* has_many :items
 
 ### Validates
 * validates :nickname, :email, :birth_date, presence: true
@@ -65,8 +67,8 @@ end
 ## Item モデル
 
 ### Association
-* has_one :buyer
-* belongs_to :transaction
+* has_one :transaction
+* belongs_to :user
 * extend ActiveHash::Associations::ActiveRecordExtensions
 * belongs_to_active_hash :category, :sales_status, :shipping_fee_status, :prefecture, :scheduled_delivery
 
@@ -81,7 +83,7 @@ end
 ## Buyer モデル
 
 ### Association
-* belongs_to :item
+* belongs_to :transaction
 * extend ActiveHash::Associations::ActiveRecordExtensions
 * belongs_to_active_hash :prefecture
 
@@ -89,54 +91,35 @@ end
 
 * validates :prefecture_id, numericality: { other_than: 1 }
 * validates :prefecture, numericality: { other_than: 0, message: "can't be blank" }
-* validates :postal_code :prefecture, :city, :addresses, :phone_num, :user, presence:true
+* validates :postal_code :prefecture, :city, :addresses, :phone_num, presence: true
 * validates :postal_code, format: {with: /\A[0-9]{3}-[0-9]{4}\z/, message: "is invalid. Include hyphen(-)"}
 
 ##  Transaction モデル
 
 ### Association
-* has_many :items
+* belongs_to :item
+* has_one :buyer
 * belongs_to :user
 
 ### Validates
-* validates :user, :item, presence: true
+* validates :user, :item, :buyer, presence: true
 
 ##  Scheduled_delivery モデル
 
-* class Scheduled_delivery < ActiveHash::Base
-self.data = [
-  {}
-]
-end
+* class Scheduled_delivery < ActiveHash::Base  self.data = [  {}  ]  end
 
 ##  Prefecture モデル
 
-* class Prefecture < ActiveHash::Base
-self.data = [
-  {}
-]
-end
+* class Prefecture < ActiveHash::Base  self.data = [  {}  ]  end
 
 ##  Shipping_fee_status モデル
 
-* class Shipping_fee_status < ActiveHash::Base
-self.data = [
-  {}
-]
-end
+* class Shipping_fee_status < ActiveHash::Base  self.data = [  {}  ]  end
 
 ##  Category モデル
 
-* class Category < ActiveHash::Base
-self.data = [
-  {}
-]
-end
+* class Category < ActiveHash::Base  self.data = [  {}  ]  end
 
 ##  Sales_status モデル
 
-* class Sales_status < ActiveHash::Base
-self.data = [
-  {}
-]
-end
+* class Sales_status < ActiveHash::Base  self.data = [  {}  ]  end
