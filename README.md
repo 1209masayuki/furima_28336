@@ -38,20 +38,19 @@
 | building      | string  |              default: ""       |
 | phone_num     | string  | null: false, default: ""       |
 
-## transactions テーブル
+## purchases テーブル
 
 | Column | Type       | Options                        |
 | ------ | ---------- | ------------------------------ |
 | user   | references | null: false, foreign_key: true |
 | item   | references | null: false, foreign_key: true |
-| buyer  | references | null: false, foreign_key: true |
 
 # モデル設計
 
 ## User モデル
 
 ### Association
-* has_many :transactions
+* has_many :purchases
 * has_many :items
 
 ### Validates
@@ -67,7 +66,7 @@ end
 ## Item モデル
 
 ### Association
-* has_one :transaction
+* has_one :purchase
 * belongs_to :user
 * extend ActiveHash::Associations::ActiveRecordExtensions
 * belongs_to_active_hash :category, :sales_status, :shipping_fee_status, :prefecture, :scheduled_delivery
@@ -83,7 +82,6 @@ end
 ## Buyer モデル
 
 ### Association
-* belongs_to :transaction
 * extend ActiveHash::Associations::ActiveRecordExtensions
 * belongs_to_active_hash :prefecture
 
@@ -94,15 +92,14 @@ end
 * validates :postal_code :prefecture, :city, :addresses, :phone_num, presence: true
 * validates :postal_code, format: {with: /\A[0-9]{3}-[0-9]{4}\z/, message: "is invalid. Include hyphen(-)"}
 
-##  Transaction モデル
+##  Purchases モデル
 
 ### Association
 * belongs_to :item
-* has_one :buyer
 * belongs_to :user
 
 ### Validates
-* validates :user, :item, :buyer, presence: true
+* validates :user, :item, presence: true
 
 ##  Scheduled_delivery モデル
 
