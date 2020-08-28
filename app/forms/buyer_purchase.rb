@@ -11,3 +11,4 @@ class BuyerPurchase
     Buyer.create(postal_code: postal_code, prefecture_id: prefecture_id, city: city, addresses: addresses, phone_num: phone_num, building: building, purchase_id: purchase.id)
   end
 end
+#  
